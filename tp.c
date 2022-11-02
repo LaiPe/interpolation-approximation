@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 3
+#define N 20
 #define M 20
 
 //DECLA MATRICES
@@ -45,13 +45,6 @@ float puiss(float x,int puiss){
     }
     return result;
 }
-float * foncAffine(int taille){
-    float * affin=declTab(taille);
-    for (int i=0;i<taille;i++){
-        affin[i]=i;
-    }
-    return affin;
-}
 
 float lagrange(float * X,float * Y,float xentree, int taille){
     float result=0;
@@ -61,8 +54,22 @@ float lagrange(float * X,float * Y,float xentree, int taille){
             if (j!=i){
                 Li*=(xentree-X[j])/(X[i]-X[j]);
             }
-    }  
+        }  
         result+=Y[i]*Li;
+    }
+    return result;
+}
+int conformLagrange(float * X,float * Y, int taille){
+    int result=0;
+    for (int i=0;i<taille;i++){
+        printf("lagrange(%g)==Y[%d]: ",X[i],i);
+        if(lagrange(X,Y,X[i],taille)==Y[i]){
+            printf("True\n");
+        }
+        else{
+            printf("False\n");
+            result++;
+        }
     }
     return result;
 }
@@ -81,18 +88,29 @@ int main(){
     initTab(X,X_a,N);
     initTab(Y,Y_a,N);
 
-    /*float * affin=foncAffine(N);
+    /*int n;
+    printf("n?:");
+    scanf("%d",&n);
+    float * affin=declTab(n);
+    for (int i=0;i<n;i++){
+        printf("%d-ème valeur:",i);
+        scanf("%f",&affin[i]);
+    }
+
     printf("{");
-    for (int i=0;i<N;i++){
+    for (int i=0;i<n;i++){
         printf("%g ",affin[i]);
     }
     printf("}\n");*/
 
-
-    float entree;
+    /*float entree;
     printf("x?:");
     scanf("%f",&entree);
     float result=lagrange(X,Y,entree,N);
     printf("y=%g\n",result);
+    */
+
+    conformLagrange(X,Y,N);
+    
     return 0;
 }
