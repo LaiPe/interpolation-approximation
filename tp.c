@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-//TAILLE TABLEAU
-#define N 21
-//Jeu d'essais 4.1
-#define M 20
-//Jeu d'essais 4.2
-#define Q 21
 
 //DECLA TAB
 float * declTab(int taille){
@@ -42,21 +36,6 @@ float puiss(float x,int puiss){
     }
     return result;
 }
-void triCroiss(float * X,float * Y,int taille){
-    int i,j,cx,cy;
-    for(i=0;i<taille-1;i++){
-        for(j=i+1;j<taille;j++){
-            if (X[i]>X[j]){
-                cx=X[i];
-                cy=Y[i];
-                X[i]=X[j];
-                Y[i]=Y[j];
-                X[j]=cx;
-                Y[j]=cy;
-            }
-        }
-    }
-}
 
 float lagrange(float * X,float * Y,float xentree, int taille){
     float result=0;
@@ -69,6 +48,7 @@ float lagrange(float * X,float * Y,float xentree, int taille){
         }  
         result+=Y[i]*Li;
     }
+   
     return result;
 }
 int conformLagrange(float * X,float * Y, int taille){
@@ -86,32 +66,55 @@ int conformLagrange(float * X,float * Y, int taille){
     return result;
 }
 int main(){
-    float * X=declTab(N);
-    float * Y=declTab(N);
+
+	float * X;
+	float * Y;
+	int choix;
+	printf("Choissez le système pour l'interpolation (1,2,3,4):\n");
+ 	scanf("%d", &choix);
+
+	int n,i;
+	if(choix==1){
+		n = 20;
+		int Tx[20]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38};
+		float Ty[20]={0.99987,0.99997,1.00000,0.99997,0.99988,0.99973,0.99953,0.99927,0.99897,0.999846,0.99805,0.999705,0.99751,0.99705,0.99650,0.99664,0.99533,0.99472,0.99333,0.99326};
+		X = (float *)malloc(n * sizeof(float));
+        Y = (float *)malloc(n * sizeof(float));
+		for(i = 0; i < n; i++){
+            X[i] = Tx[i];
+            Y[i] = Ty[i];
+        }
+	
+	}
+	else if(choix==2){
+		n = 21;
+		int Tx[21]={752,855,871,734,610,582,921,492,569,462,907,643,862,524,679,902,918,828,875,809,894};
+		float Ty[21]={85,83,162,79,81,83,281,81,81,80,243,84,84,82,80,226,260,82,186,77,223};
+		X = (float *)malloc(n * sizeof(float));
+        Y = (float *)malloc(n * sizeof(float));
+		for(i = 0; i < n; i++){
+            X[i] = Tx[i];
+            Y[i] = Ty[i];
+        }
+	}
+	else if(choix==3){
+	}
+	else if(choix==4){
+	}		
+	else{
+        printf("erreur\n");
+        exit(-1);
+	}
+
+    afficheTab(X,n);
+    afficheTab(Y,n);
+    //conformLagrange(X,Y,n);
     
-    //Jeu d'essais 4.1
-    float X_a[M]={0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38};
-    float Y_a[M]={0.99987,0.99997,1.00000,0.99997,0.99953,0.99927,0.99897,0.99846,0.99805,0.999751,0.99705,0.99650,0.99664,0.99533,0.99472,0.99472,0.99333,0.99326};
-
-    //Jeu d'essais 4.2
-    float X_b[Q]={85,83,162,79,81,83,281,81,81,80,243,84,84,82,80,226,260,82,186,77,223};
-    float Y_b[Q]={752,855,871,734,610,582,921,492,569,462,907,643,862,524,679,902,918,828,875,809,894};
-
-    initTab(X,X_b,N);
-    initTab(Y,Y_b,N);
-
-    triCroiss(X,Y,N);
-    afficheTab(X,N);
-    afficheTab(Y,N);
-
-    /*float entree;
+    float entree;
     printf("x?:");
     scanf("%f",&entree);
-    float result=lagrange(X,Y,entree,N);
-    printf("y=%g\n",result);*/
-    
+    float result=lagrange(X,Y,entree,n); //! n !!!!!
+    printf("y=%g\n",result);
 
-    conformLagrange(X,Y,N);
-    
     return 0;
 }
