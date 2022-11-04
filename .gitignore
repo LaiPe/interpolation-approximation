@@ -1,1 +1,4 @@
 /bin
+*.gz
+*.log
+*.aux

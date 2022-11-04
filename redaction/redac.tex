@@ -1,0 +1,126 @@
+\documentclass[10pt,a4paper,french]{article}
+\author{par Léo Peyronnet}
+\title{Interpolation et Approximation}
+\date{Novembre 2022}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{babel}
+\usepackage{listings}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{tabto}
+\usepackage{color}
+\usepackage[table]{xcolor}
+
+\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
+
+\lstset{
+  aboveskip=3mm,
+  belowskip=-2mm,
+  basicstyle=\footnotesize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  commentstyle=\color{ao(english)},
+  deletekeywords={...},
+  escapeinside={\%*}{*)},
+  extendedchars=true,
+  framexleftmargin=16pt,
+  framextopmargin=3pt,
+  framexbottommargin=6pt,
+  frame=tb,
+  keepspaces=true,
+  keywordstyle=\color{blue},
+  language=C,
+  literate=
+  {²}{{\textsuperscript{2}}}1
+  {⁴}{{\textsuperscript{4}}}1
+  {⁶}{{\textsuperscript{6}}}1
+  {⁸}{{\textsuperscript{8}}}1
+  {€}{{\euro{}}}1
+  {é}{{\'e}}1
+  {è}{{\`{e}}}1
+  {ê}{{\^{e}}}1
+  {ë}{{\¨{e}}}1
+  {É}{{\'{E}}}1
+  {Ê}{{\^{E}}}1
+  {û}{{\^{u}}}1
+  {ù}{{\`{u}}}1
+  {â}{{\^{a}}}1
+  {à}{{\`{a}}}1
+  {á}{{\'{a}}}1
+  {ã}{{\~{a}}}1
+  {Á}{{\'{A}}}1
+  {Â}{{\^{A}}}1
+  {Ã}{{\~{A}}}1
+  {ç}{{\c{c}}}1
+  {Ç}{{\c{C}}}1
+  {õ}{{\~{o}}}1
+  {ó}{{\'{o}}}1
+  {ô}{{\^{o}}}1
+  {Õ}{{\~{O}}}1
+  {Ó}{{\'{O}}}1
+  {Ô}{{\^{O}}}1
+  {î}{{\^{i}}}1
+  {Î}{{\^{I}}}1
+  {í}{{\'{i}}}1
+  {Í}{{\~{Í}}}1,
+  morekeywords={*,...},
+  numbers=left,
+  numbersep=10pt,
+  numberstyle=\tiny\color{black},
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  stepnumber=1,
+  stringstyle=\color{gray},
+  tabsize=4,
+  title=\lstname,
+}
+
+\begin{document}
+\maketitle
+Compte rendu du TP consistant à programmer et comparer certaines méthodes d'interpolation et d'approximation.
+\section{Rappel des méthodes}
+\subsection{Méthodes d'interpolations}
+L'interpolation est une opération mathématique visant à déterminer une fonction passant par des points donnés du plan. Plus précisément, soient $x_1,...,x_n$ des réels distincts, $y_1,...,y_n$ des réels, $n \in \mathbb{N^*}$. Alors l'interpolation consiste à déterminer une fonction telle que $\forall i \in [1,n],f(x_i)=y_i$; ce qui correspond à passer par l'ensemble des points d'interpolations $(x_i,y_i)$.
+
+Les méthodes détaillés ci-dessous interpolent des fonctions polynomiales de degré au plus $n-1$.
+\subsubsection{Méthode de Lagrange}
+La méthode de Lagrange se base sur le principe de superposition, c'est à dire que les points d'interpolation vont être traités un par un.
+
+Soit $L_1,...,L_n \in \mathbb{R}_{(n-1)}[X]$ tels que $\forall a,b \in [1,n]$, $L_a(x_b)=1$ si $a=b$, $0$ sinon, alors le polynôme $P_{(n-1)}$ est exprimé sous la forme:
+\begin{align*}
+P_{(n-1)}(x)=\sum_{i=0}^{(n-1)}y_i L_i(x)
+\end{align*}
+avec $L_i(x)$:
+\begin{align*}
+L_i(x)=\prod_{j=0,j\neq i}^{(n-1)}\frac{x-x_j}{x_i-x_j}
+\end{align*}
+\subsubsection{Méthode de Neville}
+\section{Présentation des programmes}
+\subsection{lagrange()}
+\begin{lstlisting}
+float lagrange(float * X,float * Y,float xentree, int taille){
+    float result=0;
+    for (int i=0;i<taille;i++){ 
+        float Li=1;
+        for (int j=0;j<taille;j++){
+            if (j!=i){
+                Li*=(xentree-X[j])/(X[i]-X[j]);
+            }
+        }  
+        result+=Y[i]*Li;
+    }
+    return result;
+}
+\end{lstlisting}
+\section{Observations sur les jeux d'essais}
+\section{Conclusion}
+\end{document}

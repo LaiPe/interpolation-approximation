@@ -92,7 +92,6 @@ float lagrange(float * X,float * Y,float xentree, int taille){
         }  
         result+=Y[i]*Li;
     }
-   
     return result;
 }
 int conformLagrange(float * X,float * Y, int taille){
@@ -121,8 +120,11 @@ void traceLagrange(float * X,float * Y,int taille,float ecart,float pas){
         M[1][i]=lagrange(X,Y,debut,taille);
         debut+=pas;
     }
-
     matriceToCSV(M,2,n);
+}
+
+float neville(float * X,float * Y,float xentree, int taille){
+    
 }
 int main(){
 
