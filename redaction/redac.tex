@@ -15,9 +15,6 @@
 \usepackage{mathtools}
 \usepackage{tabto}
 \usepackage{color}
-\usepackage[table]{xcolor}
-
-\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
 
 \lstset{
   aboveskip=3mm,
@@ -26,7 +23,7 @@
   breakatwhitespace=false,
   breaklines=true,
   captionpos=b,
-  commentstyle=\color{ao(english)},
+  commentstyle=\color{red},
   deletekeywords={...},
   escapeinside={\%*}{*)},
   extendedchars=true,
@@ -104,6 +101,14 @@ avec $L_i(x)$:
 L_i(x)=\prod_{j=0,j\neq i}^{(n-1)}\frac{x-x_j}{x_i-x_j}
 \end{align*}
 \subsubsection{Méthode de Neville}
+Quant à elle, la méthode de Neville se base sur la décomposition du polynome $P_{(n-1)}[x_1,x_2,...,x_n]$ en $P_{(n-2)}[x_1,x_2,...,x_{n-1}]$ et $P_{(n-2)}[x_2,x_3,...,x_{n}]$.
+
+Alors, en admettant $P_0[x_i],\forall x,i=1,...,n ; P_0[x_i](x)=y_i$:
+{\tiny
+\begin{align*}
+&\forall x,P_{k}[x_i,...,x_{i+k}](x)=\frac{(x-x_{i+k})P_{k-1}[x_i,...,x_{i+k-1}](x)+(x_i-x)P_{k-1}[x_i+1,...,x_{i+k}](x)}{x_i-x_{i+k}},\\&\forall k=1,...,n-1
+\end{align*}
+}
 \section{Présentation des programmes}
 \subsection{lagrange()}
 \begin{lstlisting}
@@ -120,6 +125,25 @@ float lagrange(float * X,float * Y,float xentree, int taille){
     }
     return result;
 }
+\end{lstlisting}
+La boucle $j$ correspond à l'opérateur produit, la boucle $i$ correspond à l'opérateur somme.
+\subsection{neville()}
+\begin{lstlisting}
+double neville(float * X,float * Y,float xentree, int n){
+    double * Pk=(double *)malloc(n * sizeof(double));
+    if (Pk==NULL){return 0;}
+    for (int j=0;j<n;j++){
+        Pk[j]=Y[j];
+    }
+
+    for(int k=1;k<n;k++){
+        for(int i=0;i<n;i++){
+            Pk[i]=((xentree-X[i+k])*Pk[i]+(X[i]-xentree)*Pk[i+1])/(X[i]-X[i+k]);
+        }
+    }
+    return Pk[0];
+}
+
 \end{lstlisting}
 \section{Observations sur les jeux d'essais}
 \section{Conclusion}

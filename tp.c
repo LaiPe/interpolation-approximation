@@ -123,8 +123,9 @@ void traceLagrange(float * X,float * Y,int taille,float ecart,float pas){
     matriceToCSV(M,2,n);
 }
 
-float neville(float * X,float * Y,float xentree, int n){
-    float * Pk=declTab(n);
+double neville(float * X,float * Y,float xentree, int n){
+    double * Pk=(double *)malloc(n * sizeof(double));
+    if (Pk==NULL){return 0;}
     for (int j=0;j<n;j++){
         Pk[j]=Y[j];
     }
@@ -154,7 +155,7 @@ void traceNeville(float * X,float * Y,int taille,float ecart,float pas){
     float debut=X[0]-ecart;
     float fin=X[taille-1]+ecart;
     int n=((fin-debut)/pas)+1;
-    //printf("%g,%g,%d\n",debut,fin,n);
+    printf("%g,%g,%d\n",debut,fin,n);
 
     float ** M=declMatrice(2,n);
     for(int i=0;i<=n;i++){
