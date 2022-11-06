@@ -123,8 +123,32 @@ void traceLagrange(float * X,float * Y,int taille,float ecart,float pas){
     matriceToCSV(M,2,n);
 }
 
-float neville(float * X,float * Y,float xentree, int taille){
-    
+float neville(float * X,float * Y,float xentree, int n){
+    float * Pk=declTab(n);
+    for (int j=0;j<n;j++){
+        Pk[j]=Y[j];
+    }
+
+    for(int k=1;k<n;k++){
+        for(int i=0;i<n;i++){
+            Pk[i]=((xentree-X[i+k])*Pk[i]+(X[i]-xentree)*Pk[i+1])/(X[i]-X[i+k]);
+        }
+    }
+    return Pk[0];
+}
+int conformNeville(float * X,float * Y, int taille){
+    int result=0;
+    for (int i=0;i<taille;i++){
+        printf("neville(%g)==Y[%d]: ",X[i],i);
+        if((neville(X,Y,X[i],taille)-Y[i])<0.000001){
+            printf("True\n");
+        }
+        else{
+            printf("False\n");
+            result++;
+        }
+    }
+    return result;
 }
 int main(){
 
@@ -197,7 +221,17 @@ int main(){
     printf("y=%g\n",result);*/
 
 
-    traceLagrange(X,Y,n,0,0.1);
+    //traceLagrange(X,Y,n,0,0.1);
+
+    afficheTab(X,n);
+    afficheTab(Y,n);
+    conformNeville(X,Y,n);
+
+    float entree;
+    printf("x?:");
+    scanf("%f",&entree);
+    float result=neville(X,Y,entree,n);
+    printf("y=%g\n",result);
 
     return 0;
 }
