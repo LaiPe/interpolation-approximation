@@ -15,6 +15,7 @@
 \usepackage{mathtools}
 \usepackage{tabto}
 \usepackage{color}
+\usepackage[table]{xcolor}
 
 \lstset{
   aboveskip=3mm,
@@ -101,9 +102,9 @@ avec $L_i(x)$:
 L_i(x)=\prod_{j=0,j\neq i}^{(n-1)}\frac{x-x_j}{x_i-x_j}
 \end{align*}
 \subsubsection{Méthode de Neville}
-Quant à elle, la méthode de Neville se base sur la décomposition du polynome $P_{(n-1)}[x_1,x_2,...,x_n]$ en $P_{(n-2)}[x_1,x_2,...,x_{n-1}]$ et $P_{(n-2)}[x_2,x_3,...,x_{n}]$.
+Quant à elle, la méthode de Neville se base sur la décomposition du polynome $P_{(n-1)}[x_1,x_2,...,x_n]$ en $P_{(n-2)}[x_1,x_2,...,x_{n-1}]$ et $P_{(n-2)}[x_2,x_3,...,x_{n}]$, et ainsi de suite.
 
-Alors, en admettant $P_0[x_i],\forall x,i=1,...,n ; P_0[x_i](x)=y_i$:
+Alors, en admettant $P_0[x_i],\forall x,i=0,...,n-1 ; P_0[x_i](x)=y_i$:
 {\tiny
 \begin{align*}
 &\forall x,P_{k}[x_i,...,x_{i+k}](x)=\frac{(x-x_{i+k})P_{k-1}[x_i,...,x_{i+k-1}](x)+(x_i-x)P_{k-1}[x_i+1,...,x_{i+k}](x)}{x_i-x_{i+k}},\\&\forall k=1,...,n-1
@@ -114,26 +115,27 @@ Alors, en admettant $P_0[x_i],\forall x,i=1,...,n ; P_0[x_i](x)=y_i$:
 \begin{lstlisting}
 float lagrange(float * X,float * Y,float xentree, int taille){
     float result=0;
-    for (int i=0;i<taille;i++){ 
+    for (int i=0;i<taille;i++){ //boucle i
         float Li=1;
-        for (int j=0;j<taille;j++){
+        for (int j=0;j<taille;j++){ //boucle j
             if (j!=i){
-                Li*=(xentree-X[j])/(X[i]-X[j]);
+                Li*=(xentree-X[j])/(X[i]-X[j]); //produit
             }
         }  
-        result+=Y[i]*Li;
+        result+=Y[i]*Li; //somme des produits par Y[i]
     }
     return result;
 }
 \end{lstlisting}
-La boucle $j$ correspond à l'opérateur produit, la boucle $i$ correspond à l'opérateur somme.
+La boucle $j$ correspond à l'opérateur produit, la boucle $i$ correspond à l'opérateur somme.\\
+Complexité temporelle: $o(x^2)$.
 \subsection{neville()}
 \begin{lstlisting}
 double neville(float * X,float * Y,float xentree, int n){
     double * Pk=(double *)malloc(n * sizeof(double));
     if (Pk==NULL){return 0;}
     for (int j=0;j<n;j++){
-        Pk[j]=Y[j];
+        Pk[j]=Y[j]; //Initialisation de P_0
     }
 
     for(int k=1;k<n;k++){
@@ -145,6 +147,94 @@ double neville(float * X,float * Y,float xentree, int n){
 }
 
 \end{lstlisting}
+La boucle $j$ permet d'initialiser $P_0$ tel que défini plus haut. Les boucles $k$ et $i$ correspondent aux variables définies plus haut. L'utilisation de variables "double" plutôt que de simples "float" sera détaillé plus tard. (c.f.: \ref{double})\\
+Complexité temporelle: $o(x^2)$.
+\subsection{Fonctions de conformité}
+Fonctions propres à chacune des méthodes d'interpolation pour s'assurer de l'adéquation du polynôme interpolé aux jeux d'essais proposés, c'est à dire si $f(x)=y$. 
+
+Les fonctions affichent leurs résultats dans le terminal pour chaque point du jeu de données et renvoie 0 si le polynôme est conforme pour l'ensemble du jeu de données, sinon un entier $n\in \{1,...,t\}$, avec $t$ le nombre de points dans le jeu. 
+\subsubsection{conformLagrange()}
+\begin{lstlisting}
+int conformLagrange(float * X,float * Y, int taille){
+    int result=0;
+    for (int i=0;i<taille;i++){
+        printf("lagrange(%g)==Y[%d]: ",X[i],i);
+        if(lagrange(X,Y,X[i],taille)==Y[i]){ //f(x)=y ?
+            printf("True\n");
+        }
+        else{
+            printf("False\n");
+            result++;
+        }
+    }
+    return result;
+}
+\end{lstlisting}
+\subsubsection{conformNeville()}\label{double}
+\begin{lstlisting}
+int conformNeville(float * X,float * Y, int taille){
+    int result=0;
+    for (int i=0;i<taille;i++){
+        printf("neville(%g)==Y[%d]: ",X[i],i);
+        if(neville(X,Y,X[i],taille)==Y[i]){ //f(x)=y ?
+            printf("True\n");
+        }
+        else{
+            printf("False\n");
+            result++;
+        }
+    }
+    return result;
+}
+\end{lstlisting}
+Le prédicat déterminant la conformité posait problème lorsque la valeur de retour de neville() était de simple précision, la passer en double précision régla le problème.
 \section{Observations sur les jeux d'essais}
-\section{Conclusion}
+\subsection{Densité de l'eau en fonction de la température}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/lagrange_1.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Lagrange: $x\in \{0,0.5,1,...,38\}$ }
+\end{center}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/neville_1.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Neville: $x\in \{0,0.5,1,...,38\}$ }
+\end{center}
+
+\subsection{Dépenses mensuelles et revenus}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/lagrange_2.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Lagrange: $x\in \{462,463,464,...,921\}$ }
+\end{center}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/neville_2.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Neville: $x\in \{462,463,464,...,921\}$ }
+\end{center}
+
+\subsection{Série S due à Anscombe}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/lagrange_3.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Lagrange: $x\in \{4,4.1,4.2,...,14\}$ }
+\end{center}
+
+\begin{center}
+\includegraphics[scale=0.25]{ressources/neville_3.PNG}
+\end{center}
+\begin{center}
+\textit{Méthode Neville: $x\in \{4,4.1,4.2,...,14\}$ }
+\end{center}
+
 \end{document}

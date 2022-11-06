@@ -141,7 +141,7 @@ int conformNeville(float * X,float * Y, int taille){
     int result=0;
     for (int i=0;i<taille;i++){
         printf("neville(%g)==Y[%d]: ",X[i],i);
-        if((neville(X,Y,X[i],taille)-Y[i])<0.000001){
+        if(neville(X,Y,X[i],taille)==Y[i]){
             printf("True\n");
         }
         else{
@@ -225,8 +225,8 @@ int main(){
         }
     }
 
-    //afficheTab(X,n);
-    //afficheTab(Y,n);
+    afficheTab(X,n);
+    afficheTab(Y,n);
     //conformLagrange(X,Y,n);
     
     /*float entree;
@@ -238,9 +238,9 @@ int main(){
 
     //traceLagrange(X,Y,n,0,0.1);
 
-    afficheTab(X,n);
-    afficheTab(Y,n);
-    conformNeville(X,Y,n);
+    //afficheTab(X,n);
+    //afficheTab(Y,n);
+    //conformNeville(X,Y,n);
 
     /*float entree;
     printf("x?:");
@@ -248,7 +248,7 @@ int main(){
     float result=neville(X,Y,entree,n);
     printf("y=%g\n",result);*/
 
-    traceNeville(X,Y,n,0,1);
+    traceNeville(X,Y,n,0,0.1);
 
     return 0;
 }
